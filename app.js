@@ -62,19 +62,35 @@ const ROOMS = [
   room("balcony2", "Sacada Suíte 3", [[10.75,10.88],[13.35,10.88],[13.55,12.47],[10.82,12.47]])
 ];
 
-const WALLS = (() => {
-  const segments = new Map();
-  ROOMS.forEach(roomItem => roomItem.points.forEach((a, index) => {
-    const b = roomItem.points[(index + 1) % roomItem.points.length];
-    const key = [a, b].map(pointValue => pointValue.map(value => value.toFixed(4)).join(",")).sort().join("|");
-    const existing = segments.get(key);
-    if (existing) existing.names.push(roomItem.name);
-    else segments.set(key, { a, b, names: [roomItem.name] });
-  }));
-  return [...segments.values()].map(segment => ({
-    name: segment.names.join(" / "), a: segment.a, b: segment.b, removable: segment.names.length > 1
-  }));
-})();
+// Segmented wall runs preserve the door openings shown on the PDF instead of
+// drawing a solid loop around every room.
+const WALLS = [
+  wall("Fachada serviço",3.13,.47,7.72,.47), wall("Fachada serviço",7.72,.47,7.72,1.94),
+  wall("Serviço / sacada",3.13,.47,3.13,1.42), wall("Serviço / sacada",3.13,2.12,3.13,6.89),
+  wall("Serviço / cozinha",3.95,1.94,6.12,1.94,true), wall("Banho de serviço",6.12,.47,6.12,1.08,true),
+  wall("Banho de serviço",6.12,1.56,6.12,1.94,true), wall("Banho de serviço",6.12,1.94,7.72,1.94,true),
+  wall("Entrada",8.58,1.94,8.58,2.60), wall("Entrada",8.58,3.12,8.58,3.29),
+  wall("Fachada social",8.58,3.29,11.48,3.29),
+  wall("Hall de entrada",12.15,3.29,12.15,4.15), wall("Hall de entrada",12.15,4.48,13.55,4.48),
+  wall("Fachada leste",13.55,4.48,13.55,12.47),
+  wall("Lavatório",11.05,4.31,11.05,4.88,true),
+  wall("Lavatório",11.05,5.21,13.55,5.21,true), wall("Banho Suíte 3",11.05,5.21,11.05,6.89,true),
+  wall("Banho Suíte 3",11.05,6.89,12.02,6.89,true), wall("Banho Suíte 3",12.60,6.89,13.55,6.89,true),
+  wall("Área social / íntima",3.13,6.89,5.40,6.89,true), wall("Área social / íntima",6.73,6.89,9.48,6.89,true),
+  wall("Circulação",9.48,6.89,9.48,7.98,true), wall("Circulação",9.48,8.52,9.48,8.34,true),
+  wall("Circulação",9.48,8.34,10.15,8.34,true), wall("Circulação",10.58,8.34,10.75,8.34,true),
+  wall("Suíte 03",10.75,6.89,10.75,8.12,true), wall("Suíte 03",10.75,8.62,10.75,10.88,true),
+  wall("Suíte 03 / sacada",10.75,10.88,11.18,10.88), wall("Suíte 03 / sacada",11.78,10.88,13.35,10.88),
+  wall("Closet",3.13,6.89,3.13,8.34,true), wall("Suíte 01",3.13,8.34,3.13,11.52),
+  wall("Suíte 01 / banho",5.40,8.34,5.40,9.34,true), wall("Suíte 01 / banho",5.40,9.88,5.40,11.52,true),
+  wall("Banho Suíte 1",5.40,8.34,5.82,8.34,true), wall("Banho Suíte 1",6.35,8.34,6.73,8.34,true),
+  wall("Banho Suíte 1 / Suíte 02",6.73,8.34,6.73,11.52,true),
+  wall("Suíte 02",6.73,8.34,9.48,8.34,true), wall("Suíte 02 / banho",9.48,8.34,9.48,9.55,true),
+  wall("Suíte 02 / banho",9.48,10.05,9.48,11.52,true), wall("Banho Suíte 2",9.48,8.34,9.86,8.34,true),
+  wall("Banho Suíte 2",10.40,8.34,10.75,8.34,true),
+  wall("Fachada dormitórios",3.13,11.52,4.86,11.52), wall("Fachada dormitórios",5.38,11.52,7.18,11.52),
+  wall("Fachada dormitórios",7.88,11.52,10.05,11.52), wall("Fachada dormitórios",10.55,11.52,10.75,11.52)
+];
 
 const canvas = document.querySelector("#scene");
 const viewport = document.querySelector("#viewport");
@@ -203,13 +219,34 @@ function addWindow(name, x1, z1, x2, z2, fullHeight = false) {
     frame.translateX(offset); apartment.add(frame);
   }
 }
-addWindow("Esquadria serviço",3.00,1.42,3.00,2.12,true);
-addWindow("Janela Suíte 01",4.86,12.42,5.38,12.42);
-addWindow("Janela Suíte 02",7.18,12.42,7.88,12.42);
-addWindow("Janela Banho Suíte 2",10.05,12.42,10.55,12.42);
-addWindow("Esquadria Suíte 03",11.18,11.78,11.78,11.78,true);
-addWindow("Guarda-corpo sacada social",.55,.45,1.35,12.35,true);
-addWindow("Guarda-corpo sacada suíte",10.82,12.55,13.55,12.55,true);
+addWindow("Esquadria serviço",3.13,1.42,3.13,2.12,true);
+addWindow("Janela Suíte 01",4.86,11.52,5.38,11.52);
+addWindow("Janela Suíte 02",7.18,11.52,7.88,11.52);
+addWindow("Janela Banho Suíte 2",10.05,11.52,10.55,11.52);
+addWindow("Esquadria Suíte 03",11.18,10.88,11.78,10.88,true);
+addWindow("Guarda-corpo sacada social",.55,.47,1.35,12.47,true);
+addWindow("Guarda-corpo sacada suíte",10.82,12.47,13.55,12.47,true);
+
+// Door leaves sit at floor level so the openings remain readable in both the
+// plan and perspective views. Their positions follow the door swings on the
+// architectural sheet; the surrounding wall segments intentionally stop at
+// these same openings.
+function addDoor(name, x1, z1, x2, z2) {
+  const [ax, az] = point(x1, z1); const [bx, bz] = point(x2, z2);
+  const length = Math.hypot(bx - ax, bz - az);
+  const leaf = new THREE.Mesh(new THREE.BoxGeometry(Math.max(length, .36), .055, .035), new THREE.MeshStandardMaterial({ color: 0x92725a, roughness: .8 }));
+  leaf.position.set((ax + bx) / 2, .09, (az + bz) / 2);
+  leaf.rotation.y = -Math.atan2(bz - az, bx - ax);
+  leaf.userData = { kind: "door", name };
+  apartment.add(leaf);
+}
+addDoor("Porta de entrada", 8.58, 2.60, 8.58, 3.12);
+addDoor("Porta cozinha / estar", 11.48, 3.29, 12.18, 3.29);
+addDoor("Porta lavatório", 11.05, 4.88, 11.05, 5.21);
+addDoor("Porta banho suíte 3", 12.02, 6.89, 12.60, 6.89);
+addDoor("Porta circulação", 10.15, 8.34, 10.58, 8.34);
+addDoor("Porta suíte 1", 5.40, 9.34, 5.40, 9.88);
+addDoor("Porta suíte 2", 9.48, 9.55, 9.48, 10.05);
 
 const APPLIANCE_TYPES = {
   fridge: { name: "Geladeira", size: [.78, 1.35, .72], color: 0xbfc5c4 },
