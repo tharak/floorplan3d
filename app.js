@@ -99,9 +99,9 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xebe8e0);
 scene.fog = new THREE.Fog(0xebe8e0, 24, 47);
 const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-camera.position.set(12.5, 15.5, 17.5);
+camera.position.set(0, 26, .1);
 const controls = new OrbitControls(camera, canvas);
-controls.target.set(0, 0, .2);
+controls.target.set(0, 0, .1);
 controls.enableDamping = true;
 controls.dampingFactor = 0.07;
 controls.maxPolarAngle = Math.PI / 2.04;
@@ -380,16 +380,22 @@ document.querySelector("#mobilePanelBtn").addEventListener("click", () => docume
 document.querySelector("#mobileCloseBtn").addEventListener("click", () => document.querySelector(".sidebar").classList.remove("open"));
 
 const views = {
-  perspective: { position: [12.5, 15.5, 17.5], target: [0, 0, .2], wallHeight: WALL_BASE_HEIGHT },
   top: { position: [0, 26, .1], target: [0, 0, .1], wallHeight: .38 },
-  walk: { position: [-1.2, 1.5, -2.8], target: [3.8, 1.2, -1.8], wallHeight: 2.4 }
+  walk: { position: [-1.2, 1.5, -2.8], target: [3.8, 1.2, -1.8], wallHeight: 2.4 },
+  cameraReset: { position: [12.5, 15.5, 17.5], target: [0, 0, .2], wallHeight: WALL_BASE_HEIGHT }
 };
-document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => {
-  const view = views[button.dataset.view]; camera.position.fromArray(view.position); controls.target.fromArray(view.target);
+function applyView(viewName, activeButton = null) {
+  const view = views[viewName]; camera.position.fromArray(view.position); controls.target.fromArray(view.target);
   walls.forEach(item => { item.scale.y = view.wallHeight / WALL_BASE_HEIGHT; item.position.y = view.wallHeight / 2; });
-  controls.maxPolarAngle = button.dataset.view === "walk" ? Math.PI / 1.75 : Math.PI / 2.04; controls.update();
-  document.querySelectorAll("[data-view]").forEach(item => item.classList.toggle("active", item === button));
-}));
+  controls.maxPolarAngle = viewName === "walk" ? Math.PI / 1.75 : Math.PI / 2.04; controls.update();
+  if (activeButton) document.querySelectorAll("[data-view]").forEach(item => item.classList.toggle("active", item === activeButton));
+}
+document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => applyView(button.dataset.view, button)));
+document.querySelector("#resetCameraBtn").addEventListener("click", () => {
+  applyView("cameraReset", document.querySelector('[data-view="top"]'));
+  showToast("Câmera reposicionada");
+});
+applyView("top", document.querySelector('[data-view="top"]'));
 
 function showToast(message) {
   const toast = document.querySelector("#toast"); toast.textContent = message; toast.classList.add("show");
