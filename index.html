@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f2eb" />
+    <title>Miragio 204 — Estúdio 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Início">
+        <span class="brand-mark">M</span>
+        <span><strong>Miragio 204</strong><small>Estúdio de interiores</small></span>
+      </a>
+      <div class="project-status"><span></span> Alterações salvas neste dispositivo</div>
+      <div class="top-actions">
+        <button class="icon-button" id="undoBtn" title="Desfazer" aria-label="Desfazer">↶</button>
+        <button class="button ghost" id="resetBtn">Restaurar</button>
+        <button class="button primary" id="captureBtn">Exportar imagem</button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar">
+        <button class="mobile-close" id="mobileCloseBtn" aria-label="Fechar painel">×</button>
+        <div class="sidebar-heading">
+          <p class="eyebrow">Apartamento 204 · Torre 1 e 3</p>
+          <h1>Transforme o espaço.</h1>
+          <p>Selecione um piso, parede ou móvel diretamente na maquete.</p>
+        </div>
+
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="materials">Materiais</button>
+          <button class="tab" data-tab="furniture">Móveis</button>
+          <button class="tab" data-tab="project">Projeto</button>
+        </div>
+
+        <section class="panel active" id="materialsPanel">
+          <div class="selection-card">
+            <span class="selection-icon">◇</span>
+            <div><small>Selecionado</small><strong id="selectionName">Estar / Jantar</strong></div>
+          </div>
+          <div class="segmented" id="surfaceToggle">
+            <button class="active" data-surface="floor">Piso</button>
+            <button data-surface="wall">Parede</button>
+          </div>
+          <div class="section-title"><span>Acabamentos</span><small>Clique para aplicar</small></div>
+          <div class="materials-grid" id="materialList"></div>
+          <button class="button outline full" id="hideWallBtn">Remover parede selecionada</button>
+          <p class="hint">Dica: no modo Parede, clique em uma parede da maquete antes de aplicar um acabamento.</p>
+        </section>
+
+        <section class="panel" id="furniturePanel">
+          <div class="section-title"><span>Adicionar ao ambiente</span><small>Arraste para mover</small></div>
+          <div class="furniture-grid">
+            <button data-furniture="sofa"><span class="furniture-preview sofa"></span><strong>Sofá</strong><small>3 lugares</small></button>
+            <button data-furniture="table"><span class="furniture-preview table"></span><strong>Mesa</strong><small>Jantar</small></button>
+            <button data-furniture="bed"><span class="furniture-preview bed"></span><strong>Cama</strong><small>Queen</small></button>
+            <button data-furniture="chair"><span class="furniture-preview chair"></span><strong>Poltrona</strong><small>Compacta</small></button>
+          </div>
+          <div class="object-actions">
+            <button class="button outline" id="rotateBtn">Girar 45°</button>
+            <button class="button danger" id="deleteBtn">Excluir móvel</button>
+          </div>
+          <p class="hint">Selecione um móvel na maquete. Arraste sobre o piso para reposicioná-lo.</p>
+        </section>
+
+        <section class="panel" id="projectPanel">
+          <div class="project-card">
+            <div><small>Fonte do modelo</small><strong>Planta de Arquitetura</strong><span>Miragio Cacupé · Final 4</span></div>
+            <a href="raw/Plantas%20204%20T3.pdf" target="_blank" rel="noreferrer">Abrir PDF ↗</a>
+          </div>
+          <div class="info-row"><span>Ambientes</span><strong>12</strong></div>
+          <div class="info-row"><span>Pé-direito principal</span><strong>2,60 m</strong></div>
+          <div class="info-row"><span>Escala de referência</span><strong>1:100</strong></div>
+          <div class="notice"><strong>Modelo conceitual</strong><p>Geometria aproximada para visualização. Valide medidas e alterações estruturais com um profissional.</p></div>
+        </section>
+      </aside>
+
+      <section class="viewport" id="viewport">
+        <canvas id="scene" aria-label="Maquete 3D interativa do apartamento"></canvas>
+        <div class="view-toolbar">
+          <button class="active" data-view="perspective">3D</button>
+          <button data-view="top">Planta</button>
+          <button data-view="walk">Interior</button>
+        </div>
+        <div class="room-label" id="roomLabel">ESTAR / JANTAR</div>
+        <div class="controls-help"><span>Arraste para orbitar</span><span>⇧ + arraste para mover</span><span>Scroll para zoom</span></div>
+        <button class="mobile-panel-toggle" id="mobilePanelBtn">Personalizar</button>
+        <div class="loading" id="loading"><span></span><p>Preparando sua maquete</p></div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
