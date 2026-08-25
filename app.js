@@ -385,15 +385,23 @@ const views = {
   cameraReset: { position: [12.5, 15.5, 17.5], target: [0, 0, .2], wallHeight: WALL_BASE_HEIGHT }
 };
 function applyView(viewName, activeButton = null) {
-  const view = views[viewName]; camera.position.fromArray(view.position); controls.target.fromArray(view.target);
+  const view = views[viewName];
+  controls.enabled = false;
+  camera.up.set(0, 1, 0);
+  camera.position.fromArray(view.position);
+  controls.target.fromArray(view.target);
   walls.forEach(item => { item.scale.y = view.wallHeight / WALL_BASE_HEIGHT; item.position.y = view.wallHeight / 2; });
-  controls.maxPolarAngle = viewName === "walk" ? Math.PI / 1.75 : Math.PI / 2.04; controls.update();
+  controls.maxPolarAngle = viewName === "walk" ? Math.PI / 1.75 : Math.PI / 2.04;
+  camera.lookAt(controls.target);
+  camera.updateProjectionMatrix();
+  controls.update();
+  controls.enabled = true;
   if (activeButton) document.querySelectorAll("[data-view]").forEach(item => item.classList.toggle("active", item === activeButton));
 }
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => applyView(button.dataset.view, button)));
-document.querySelector("#resetCameraBtn").addEventListener("click", () => {
+document.querySelector("#showWallsBtn").addEventListener("click", () => {
   applyView("cameraReset", document.querySelector('[data-view="top"]'));
-  showToast("Câmera reposicionada");
+  showToast("Walls shown");
 });
 applyView("top", document.querySelector('[data-view="top"]'));
 
