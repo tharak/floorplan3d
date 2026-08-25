@@ -116,12 +116,30 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
   .brand { min-width: 0; }
   .brand small, .project-status, .top-actions .ghost, .icon-button { display: none; }
   .top-actions { min-width: 0; }
-  main { height: calc(100% - 60px); display: block; }
-  .sidebar { position: absolute; z-index: 30; left: 0; right: 0; bottom: 0; max-height: 72vh; border: 0; border-radius: 18px 18px 0 0; transform: translateY(105%); transition: transform .3s ease; box-shadow: var(--shadow); padding: 22px 18px; }
+  main { height: calc(100% - 60px); display: block; position: relative; }
+  .sidebar { position: absolute; z-index: 30; left: 0; right: 0; bottom: 0; height: 46%; max-height: none; border: 0; border-radius: 16px 16px 0 0; transform: translateY(105%); transition: transform .3s ease; box-shadow: 0 -8px 28px rgba(33,35,29,.14); padding: 12px 14px 18px; }
   .sidebar.open { transform: translateY(0); }
-  .mobile-close { display: grid; place-items: center; position: absolute; right: 14px; top: 14px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #efede7; font-size: 20px; cursor: pointer; z-index: 2; }
-  .viewport { width: 100%; height: 100%; }
+  .sidebar-heading { display: none; }
+  .tabs { margin: 0 36px 9px 0; }
+  .tab { padding: 7px 2px 9px; }
+  .selection-card { padding: 8px 10px; margin-bottom: 8px; }
+  .selection-icon { width: 28px; height: 28px; }
+  .section-title { margin-bottom: 7px; }
+  .material-search { height: 34px; margin-bottom: 8px; }
+  .brand-group { padding-top: 7px; }
+  .brand-heading { margin-bottom: 4px; }
+  .category-group { margin-top: 5px; }
+  .category-group summary { padding: 8px 9px; }
+  .materials-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 8px; }
+  .material strong { font-size: 8px; margin-top: 4px; }
+  .material small, .hint { display: none; }
+  .mobile-close { display: grid; place-items: center; position: absolute; right: 10px; top: 9px; width: 30px; height: 30px; border: 0; border-radius: 50%; background: #efede7; font-size: 19px; cursor: pointer; z-index: 2; }
+  .viewport { width: 100%; height: 100%; transition: height .3s ease; }
+  .sidebar.open + .viewport { height: 54%; }
   .mobile-panel-toggle { display: block; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); border: 0; border-radius: 24px; background: var(--ink); color: white; padding: 12px 22px; font-weight: 600; }
+  .sidebar.open + .viewport .mobile-panel-toggle { display: none; }
   .controls-help { display: none; }
   .view-toolbar { top: 12px; }
+  .room-label { top: 58px; max-width: calc(100% - 28px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast { bottom: calc(46% + 10px); max-width: calc(100% - 28px); text-align: center; }
 }

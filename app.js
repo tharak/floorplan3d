@@ -206,13 +206,14 @@ function updatePointer(event) {
   raycaster.setFromCamera(pointer, camera);
 }
 
-function selectObject(object) {
+function selectObject(object, openPicker = true) {
   if (!object) return;
   selected = object;
   document.querySelector('[data-tab="materials"]').click();
   document.querySelector("#selectionName").textContent = object.userData.name;
   document.querySelector("#roomLabel").textContent = object.userData.name.toUpperCase();
   renderMaterials();
+  if (openPicker && matchMedia("(max-width: 760px)").matches) setMobilePanel(true);
 }
 
 canvas.addEventListener("pointerdown", event => {
@@ -300,7 +301,7 @@ function applyState(state) {
     const id = MATERIALS.some(material => material.id === value.material) ? value.material : "base-wall";
     item.visible = value.visible; item.material.dispose(); item.material = materialFor(id, "wall"); item.userData.materialId = id;
   });
-  selectObject(floors.find(item => item.userData.id === "living"));
+  selectObject(floors.find(item => item.userData.id === "living"), false);
 }
 function pushHistory() { history.push(JSON.stringify(serialize())); if (history.length > 20) history.shift(); }
 function saveState() { localStorage.setItem("miragio204-design", JSON.stringify(serialize())); }
@@ -315,8 +316,14 @@ document.querySelector("#hideWallBtn").addEventListener("click", () => { if (sel
 document.querySelector("#undoBtn").addEventListener("click", () => { const state = history.pop(); if (!state) return showToast("Nada para desfazer"); applyState(JSON.parse(state)); saveState(); showToast("Alteração desfeita"); });
 document.querySelector("#resetBtn").addEventListener("click", () => { pushHistory(); localStorage.removeItem("miragio204-design"); location.reload(); });
 document.querySelector("#captureBtn").addEventListener("click", () => { renderer.render(scene, camera); const link = document.createElement("a"); link.download = "miragio-204-estudo.png"; link.href = canvas.toDataURL("image/png"); link.click(); showToast("Imagem exportada"); });
-document.querySelector("#mobilePanelBtn").addEventListener("click", () => document.querySelector(".sidebar").classList.toggle("open"));
-document.querySelector("#mobileCloseBtn").addEventListener("click", () => document.querySelector(".sidebar").classList.remove("open"));
+const sidebar = document.querySelector(".sidebar");
+const mobilePanelButton = document.querySelector("#mobilePanelBtn");
+function setMobilePanel(open) {
+  sidebar.classList.toggle("open", open);
+  mobilePanelButton.setAttribute("aria-expanded", String(open));
+}
+mobilePanelButton.addEventListener("click", () => setMobilePanel(!sidebar.classList.contains("open")));
+document.querySelector("#mobileCloseBtn").addEventListener("click", () => setMobilePanel(false));
 
 const views = {
   top: { position: [0, 26, .1], target: [0, 0, .1], wallHeight: .38 },
