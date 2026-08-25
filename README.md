@@ -36,4 +36,4 @@ O workflow `.github/workflows/pages.yml` publica automaticamente pushes para `ma
 
 ## Limitações
 
-Este é um modelo conceitual traçado a partir da primeira folha arquitetônica do PDF. Ele não substitui levantamento, projeto executivo ou validação estrutural. A remoção de paredes é apenas uma simulação visual.
+Este é um modelo conceitual retraçado a partir da primeira folha arquitetônica do PDF. Ele não substitui levantamento, projeto executivo ou validação estrutural. A remoção de paredes é apenas uma simulação visual.

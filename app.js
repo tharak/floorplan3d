@@ -44,52 +44,37 @@ const point = (x, z) => [x - CENTER_X, z - CENTER_Z];
 const room = (id, name, coordinates) => ({ id, name, points: coordinates.map(([x, z]) => point(x, z)) });
 const wall = (name, x1, z1, x2, z2, removable = false) => ({ name, a: point(x1, z1), b: point(x2, z2), removable });
 
-// Geometry traced from sheet 1 of the supplied architectural PDF.
+// Geometry retraced against the architectural sheet crop (the PDF remains the dimensional source of truth).
 const ROOMS = [
-  room("balcony1", "Sacada social", [[.55,.45],[2.95,.45],[2.95,7.30],[2.42,7.30],[2.42,12.35],[1.35,12.35]]),
-  room("service", "Serviço", [[3.05,.45],[6.10,.45],[6.10,1.95],[3.85,1.95],[3.85,2.08],[3.05,2.08]]),
-  room("serviceBath", "Banho de serviço", [[6.15,.45],[7.50,.45],[7.50,1.95],[6.15,1.95]]),
-  room("living", "Cozinha gourmet · Estar / Jantar", [[3.05,2.05],[7.68,2.05],[7.68,3.45],[11.14,3.45],[11.14,7.27],[3.05,7.27]]),
-  room("lavatory", "Lavatório", [[11.27,4.52],[13.48,4.52],[13.48,5.73],[11.27,5.73]]),
-  room("bath3", "Banho Suíte 3", [[11.27,5.85],[13.48,5.85],[13.48,7.27],[11.27,7.27]]),
-  room("closet", "Closet", [[2.43,7.43],[9.42,7.43],[9.42,8.86],[5.28,8.86],[5.28,9.02],[2.43,9.02]]),
-  room("hall", "Circulação", [[9.47,7.43],[10.65,7.43],[10.65,9.92],[9.47,9.92]]),
-  room("suite1", "Suíte 01", [[2.43,9.02],[5.24,9.02],[5.24,12.32],[2.43,12.32]]),
-  room("bath1", "Banho Suíte 1", [[5.34,9.02],[6.65,9.02],[6.65,12.32],[5.34,12.32]]),
-  room("suite2", "Suíte 02", [[6.73,9.02],[9.38,9.02],[9.38,12.32],[6.73,12.32]]),
-  room("bath2", "Banho Suíte 2", [[9.48,9.94],[10.66,9.94],[10.66,12.32],[9.48,12.32]]),
-  room("suite3", "Suíte 03", [[10.78,7.45],[13.48,7.45],[13.48,11.66],[10.78,11.66]]),
-  room("balcony2", "Sacada Suíte 3", [[10.75,11.82],[13.48,11.82],[13.55,12.55],[10.82,12.55]])
+  room("balcony1", "Sacada social", [[.55,.47],[3.13,.47],[3.13,6.89],[2.58,6.89],[2.58,12.47],[1.35,12.47]]),
+  room("service", "Serviço", [[3.13,.47],[6.12,.47],[6.12,1.94],[3.95,1.94],[3.95,2.05],[3.13,2.05]]),
+  room("serviceBath", "Banho de serviço", [[6.12,.47],[7.72,.47],[7.72,1.94],[6.12,1.94]]),
+  room("living", "Cozinha gourmet · Estar / Jantar", [[3.13,1.94],[7.72,1.94],[7.72,3.29],[8.58,3.29],[8.58,3.29],[12.15,3.29],[12.15,6.89],[3.13,6.89]]),
+  room("lavatory", "Lavatório", [[11.05,4.31],[13.55,4.31],[13.55,5.21],[11.05,5.21]]),
+  room("bath3", "Banho Suíte 3", [[11.05,5.21],[13.55,5.21],[13.55,6.89],[11.05,6.89]]),
+  room("closet", "Closet", [[3.13,6.89],[9.48,6.89],[9.48,8.34],[5.40,8.34],[5.40,8.42],[3.13,8.42]]),
+  room("hall", "Circulação", [[9.48,6.89],[10.75,6.89],[10.75,8.34],[9.48,8.34]]),
+  room("suite1", "Suíte 01", [[3.13,8.34],[5.40,8.34],[5.40,11.52],[3.13,11.52]]),
+  room("bath1", "Banho Suíte 1", [[5.40,8.34],[6.73,8.34],[6.73,11.52],[5.40,11.52]]),
+  room("suite2", "Suíte 02", [[6.73,8.34],[9.48,8.34],[9.48,11.52],[6.73,11.52]]),
+  room("bath2", "Banho Suíte 2", [[9.48,8.34],[10.75,8.34],[10.75,11.52],[9.48,11.52]]),
+  room("suite3", "Suíte 03", [[10.75,6.89],[13.35,6.89],[13.35,10.88],[10.75,10.88]]),
+  room("balcony2", "Sacada Suíte 3", [[10.75,10.88],[13.35,10.88],[13.55,12.47],[10.82,12.47]])
 ];
 
-const WALLS = [
-  wall("Fachada serviço",3.00,.42,7.55,.42), wall("Fachada serviço",7.55,.42,7.55,1.96),
-  wall("Serviço / sacada",3.00,.42,3.00,1.42), wall("Serviço / sacada",3.00,2.12,3.00,7.28),
-  wall("Serviço / cozinha",3.82,1.98,6.05,1.98,true), wall("Banho de serviço",6.12,.42,6.12,1.08,true),
-  wall("Banho de serviço",6.12,1.56,6.12,1.98,true), wall("Banho de serviço",6.12,1.98,7.72,1.98,true),
-  wall("Entrada",7.72,1.98,7.72,2.60), wall("Entrada",7.72,3.12,7.72,3.48),
-  wall("Fachada social",7.72,3.48,11.48,3.48), wall("Fachada social",12.18,3.48,12.28,3.48),
-  wall("Hall de entrada",12.28,3.48,12.28,4.15), wall("Hall de entrada",12.28,4.48,13.50,4.48),
-  wall("Fachada leste",13.50,4.48,13.50,12.42),
-  wall("Lavatório",11.25,4.50,11.25,4.88,true), wall("Lavatório",11.25,5.40,11.25,5.75,true),
-  wall("Lavatório",11.25,5.75,13.50,5.75,true), wall("Banho Suíte 3",11.25,5.83,11.25,7.28,true),
-  wall("Banho Suíte 3",11.25,7.28,12.02,7.28,true), wall("Banho Suíte 3",12.60,7.28,13.50,7.28,true),
-  wall("Área social / íntima",2.40,7.30,5.65,7.30,true), wall("Área social / íntima",6.18,7.30,9.45,7.30,true),
-  wall("Circulação",9.45,7.30,9.45,7.98,true), wall("Circulação",9.45,8.52,9.45,8.88,true),
-  wall("Circulação",9.45,8.88,10.15,8.88,true), wall("Circulação",10.58,8.88,10.68,8.88,true),
-  wall("Suíte 03",10.68,7.38,10.68,8.12,true), wall("Suíte 03",10.68,8.62,10.68,9.92,true),
-  wall("Suíte 03",10.68,9.92,10.68,11.78), wall("Suíte 03 / sacada",10.68,11.78,11.18,11.78),
-  wall("Suíte 03 / sacada",11.78,11.78,13.50,11.78),
-  wall("Closet",2.40,7.30,2.40,8.92,true), wall("Suíte 01",2.40,8.92,2.40,12.42),
-  wall("Suíte 01 / banho",5.28,8.92,5.28,9.34,true), wall("Suíte 01 / banho",5.28,9.88,5.28,12.42,true),
-  wall("Banho Suíte 1",5.28,8.92,5.82,8.92,true), wall("Banho Suíte 1",6.35,8.92,6.70,8.92,true),
-  wall("Banho Suíte 1 / Suíte 02",6.70,8.92,6.70,12.42,true),
-  wall("Suíte 02",6.70,8.92,9.40,8.92,true), wall("Suíte 02 / banho",9.40,8.92,9.40,9.55,true),
-  wall("Suíte 02 / banho",9.40,10.05,9.40,12.42,true), wall("Banho Suíte 2",9.40,9.92,9.86,9.92,true),
-  wall("Banho Suíte 2",10.40,9.92,10.68,9.92,true),
-  wall("Fachada dormitórios",2.40,12.42,4.86,12.42), wall("Fachada dormitórios",5.38,12.42,7.18,12.42),
-  wall("Fachada dormitórios",7.88,12.42,10.05,12.42), wall("Fachada dormitórios",10.55,12.42,10.75,12.42)
-];
+const WALLS = (() => {
+  const segments = new Map();
+  ROOMS.forEach(roomItem => roomItem.points.forEach((a, index) => {
+    const b = roomItem.points[(index + 1) % roomItem.points.length];
+    const key = [a, b].map(pointValue => pointValue.map(value => value.toFixed(4)).join(",")).sort().join("|");
+    const existing = segments.get(key);
+    if (existing) existing.names.push(roomItem.name);
+    else segments.set(key, { a, b, names: [roomItem.name] });
+  }));
+  return [...segments.values()].map(segment => ({
+    name: segment.names.join(" / "), a: segment.a, b: segment.b, removable: segment.names.length > 1
+  }));
+})();
 
 const canvas = document.querySelector("#scene");
 const viewport = document.querySelector("#viewport");
