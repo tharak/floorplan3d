@@ -152,10 +152,11 @@ const planOverlayTextures = {
   systems: textureLoader.load("overlays/ac-gas-risers.png")
 };
 Object.values(planOverlayTextures).forEach(texture => { texture.colorSpace = THREE.SRGBColorSpace; });
-const planOverlayMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: .72, depthWrite: false, side: THREE.DoubleSide });
+const planOverlayMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: .72, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, side: THREE.DoubleSide });
 const planOverlay = new THREE.Mesh(new THREE.PlaneGeometry(13, 12.13), planOverlayMaterial);
 planOverlay.rotation.x = -Math.PI / 2;
-planOverlay.position.set(.05, .075, -.315);
+// Keep the reference sheet one pixel-equivalent above the floor to avoid z-fighting.
+planOverlay.position.set(.05, .12, -.315);
 planOverlay.renderOrder = 4;
 planOverlay.visible = false;
 apartment.add(planOverlay);
