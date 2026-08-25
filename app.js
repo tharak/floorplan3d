@@ -2,15 +2,25 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const MATERIALS = [
-  { id: "oak", name: "Carvalho claro", type: "floor", image: "textures/oak.webp", color: "#d6aa73", roughness: 0.7, repeat: [2.5, 2.5] },
-  { id: "travertine", name: "Travertino", type: "floor", image: "textures/travertine.webp", color: "#d8cbb5", roughness: 0.85, repeat: [3, 3] },
-  { id: "sand", name: "Areia acetinada", type: "floor", color: "#c7b69e", roughness: 0.92 },
-  { id: "charcoal", name: "Pedra grafite", type: "floor", color: "#4f514f", roughness: 0.9 },
-  { id: "limewash", name: "Cal mineral", type: "wall", image: "textures/limewash.webp", color: "#dedbd1", roughness: 1, repeat: [2, 1] },
-  { id: "warmwhite", name: "Branco quente", type: "wall", color: "#ebe7dc", roughness: 0.95 },
-  { id: "clay", name: "Argila", type: "wall", color: "#a9684d", roughness: 0.96 },
-  { id: "sage", name: "Sálvia", type: "wall", color: "#778070", roughness: 0.96 }
+  { id: "oak", name: "Carvalho claro", type: "floor", brand: "Studio", category: "Madeiras", finish: "Natural", image: "textures/oak.webp", color: "#d6aa73", roughness: 0.7, repeat: [2.5, 2.5] },
+  { id: "travertine", name: "Travertino", type: "floor", brand: "Studio", category: "Pedras", finish: "Honed", image: "textures/travertine.webp", color: "#d8cbb5", roughness: 0.85, repeat: [3, 3] },
+  { id: "sand", name: "Areia acetinada", type: "floor", brand: "Studio", category: "Cores", finish: "Acetinado", color: "#c7b69e", roughness: 0.92 },
+  { id: "charcoal", name: "Pedra grafite", type: "floor", brand: "Studio", category: "Pedras", finish: "Fosco", color: "#4f514f", roughness: 0.9 },
+  { id: "limewash", name: "Cal mineral", type: "wall", brand: "Studio", category: "Revestimentos", finish: "Mineral", image: "textures/limewash.webp", color: "#dedbd1", roughness: 1, repeat: [2, 1] },
+  { id: "warmwhite", name: "Branco quente", type: "wall", brand: "Studio", category: "Cores", finish: "Fosco", color: "#ebe7dc", roughness: 0.95 },
+  { id: "clay", name: "Argila", type: "wall", brand: "Studio", category: "Cores", finish: "Fosco", color: "#a9684d", roughness: 0.96 },
+  { id: "sage", name: "Sálvia", type: "wall", brand: "Studio", category: "Cores", finish: "Fosco", color: "#778070", roughness: 0.96 }
 ];
+
+const CATEGORY_LABELS = {
+  "colecao-realce": "Coleção Realce",
+  "cores": "Cores",
+  "madeiras": "Madeiras",
+  "madeiras-brasileiras": "Madeiras Brasileiras",
+  "metais": "Metais",
+  "pedras": "Pedras",
+  "tecidos": "Tecidos"
+};
 
 try {
   const response = await fetch("textures/arauco/source-manifest.json");
@@ -21,6 +31,7 @@ try {
       name: item.name,
       type: "wall",
       brand: "ARAUCO",
+      category: CATEGORY_LABELS[item.collection] || item.collection,
       finish: item.finish,
       image: `textures/arauco/${item.filename}`,
       color: "#ffffff",
@@ -248,7 +259,6 @@ const pointer = new THREE.Vector2();
 const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const dragPoint = new THREE.Vector3();
 let selected = floors.find(floor => floor.userData.id === "living");
-let selectedSurface = "floor";
 let dragging = null;
 let dragOffset = new THREE.Vector3();
 let pointerDown = null;
@@ -270,8 +280,6 @@ function selectObject(object) {
   if (!object) return;
   selected = object;
   if (object.userData.kind === "floor" || object.userData.kind === "wall") {
-    selectedSurface = object.userData.kind;
-    document.querySelectorAll("#surfaceToggle button").forEach(button => button.classList.toggle("active", button.dataset.surface === selectedSurface));
     document.querySelector('[data-tab="materials"]').click();
   } else {
     document.querySelector('[data-tab="furniture"]').click();
@@ -306,7 +314,7 @@ canvas.addEventListener("pointerup", event => {
   if (dragging) { saveState(); selectObject(dragging); dragging = null; controls.enabled = true; return; }
   if (pointerDown && Math.hypot(event.clientX - pointerDown.x, event.clientY - pointerDown.y) < 5) {
     updatePointer(event);
-    const candidates = selectedSurface === "wall" ? walls.filter(wall => wall.visible) : [...furniture, ...floors];
+    const candidates = [...furniture, ...walls.filter(wall => wall.visible), ...floors];
     const hit = raycaster.intersectObjects(candidates, true)[0];
     if (hit) selectObject(selectableParent(hit.object));
   }
@@ -316,27 +324,52 @@ function renderMaterials() {
   const list = document.querySelector("#materialList");
   list.innerHTML = "";
   const search = document.querySelector("#materialSearch");
-  search.hidden = selectedSurface !== "wall";
   const query = search.value.trim().toLocaleLowerCase("pt-BR");
-  const available = MATERIALS.filter(item => item.type === selectedSurface && (!query || `${item.name} ${item.finish || ""}`.toLocaleLowerCase("pt-BR").includes(query)));
-  available.forEach(item => {
-    const button = document.createElement("button"); button.className = "material";
-    if (selected?.userData.materialId === item.id) button.classList.add("active");
-    const background = item.image ? `url('${item.image}')` : item.color;
-    button.innerHTML = `<span class="swatch" style="background:${background}"></span><strong>${item.name}</strong>${item.brand ? `<small>${item.finish}</small>` : ""}`;
-    button.addEventListener("click", () => applyMaterial(item)); list.append(button);
-  });
+  const available = MATERIALS.filter(item => !query || `${item.name} ${item.brand} ${item.category} ${item.finish}`.toLocaleLowerCase("pt-BR").includes(query));
+  const brands = groupBy(available, item => item.brand || "Outros");
+  for (const [brand, brandItems] of brands) {
+    const section = document.createElement("section"); section.className = "brand-group";
+    section.innerHTML = `<div class="brand-heading"><strong>${brand}</strong><small>${brandItems.length} padrões</small></div>`;
+    const categories = groupBy(brandItems, item => item.category || "Outros");
+    for (const [category, categoryItems] of categories) {
+      const details = document.createElement("details"); details.className = "category-group";
+      details.open = Boolean(query) || brand === "Studio";
+      details.innerHTML = `<summary><span>${category}</span><small>${categoryItems.length}</small></summary><div class="materials-grid"></div>`;
+      const grid = details.querySelector(".materials-grid");
+      categoryItems.forEach(item => {
+        const button = document.createElement("button"); button.className = "material";
+        if (selected?.userData.materialId === item.id) button.classList.add("active");
+        const swatch = item.image
+          ? `<img class="swatch" src="${item.image}" alt="" loading="lazy" decoding="async">`
+          : `<span class="swatch" style="background:${item.color}"></span>`;
+        button.innerHTML = `${swatch}<strong>${item.name}</strong><small>${item.finish}</small>`;
+        button.addEventListener("click", () => applyMaterial(item)); grid.append(button);
+      });
+      section.append(details);
+    }
+    list.append(section);
+  }
   const hide = document.querySelector("#hideWallBtn");
-  hide.style.display = selectedSurface === "wall" ? "block" : "none";
+  hide.style.display = selected?.userData.kind === "wall" ? "block" : "none";
   hide.disabled = selected?.userData.kind !== "wall" || !selected.userData.removable;
   hide.textContent = hide.disabled ? "Selecione uma divisória" : "Remover parede selecionada";
 }
 
 function applyMaterial(item) {
-  if (!selected || selected.userData.kind !== selectedSurface) return showToast(`Selecione um ${selectedSurface === "floor" ? "piso" : "parede"} primeiro`);
+  if (!selected || !["floor", "wall"].includes(selected.userData.kind)) return showToast("Selecione um piso ou parede primeiro");
   pushHistory();
-  selected.material.dispose(); selected.material = materialFor(item.id, item.type); selected.userData.materialId = item.id;
+  selected.material.dispose(); selected.material = materialFor(item.id, selected.userData.kind); selected.userData.materialId = item.id;
   saveState(); renderMaterials(); showToast(`${item.name} aplicado em ${selected.userData.name}`);
+}
+
+function groupBy(items, keyFor) {
+  const groups = new Map();
+  for (const item of items) {
+    const key = keyFor(item);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  }
+  return groups;
 }
 
 function serialize() {
@@ -362,11 +395,6 @@ document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", (
   document.querySelectorAll(".tab").forEach(item => item.classList.toggle("active", item === tab));
   document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
   document.querySelector(`#${tab.dataset.tab}Panel`).classList.add("active");
-}));
-document.querySelectorAll("#surfaceToggle button").forEach(button => button.addEventListener("click", () => {
-  selectedSurface = button.dataset.surface;
-  document.querySelectorAll("#surfaceToggle button").forEach(item => item.classList.toggle("active", item === button));
-  renderMaterials(); showToast(`Clique em ${selectedSurface === "floor" ? "um ambiente" : "uma parede"} na maquete`);
 }));
 document.querySelector("#materialSearch").addEventListener("input", renderMaterials);
 document.querySelectorAll("[data-furniture]").forEach(button => button.addEventListener("click", () => { pushHistory(); makeFurniture(button.dataset.furniture); saveState(); showToast("Móvel adicionado — arraste para posicionar"); }));

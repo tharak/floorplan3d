@@ -5,9 +5,10 @@ Protótipo web estático para visualização e personalização do apartamento d
 ## Recursos
 
 - Maquete 3D navegável com vistas 3D, planta e interior
-- Seleção de ambientes, pisos, paredes e móveis
-- Aplicação de materiais de piso e parede
+- Seleção direta de ambientes, pisos, paredes e móveis
+- Biblioteca unificada: qualquer acabamento pode ser aplicado ao piso ou à parede selecionada
 - Catálogo pesquisável com 84 padrões oficiais ARAUCO Melamina, carregados sob demanda
+- Acabamentos agrupados por marca, categoria/coleção e tipo de textura
 - Remoção visual de divisórias internas
 - Adição, movimentação, rotação e exclusão de móveis
 - Histórico de desfazer, persistência local e exportação de imagem
