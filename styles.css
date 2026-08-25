@@ -107,6 +107,9 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
 .view-toolbar button { border: 0; background: transparent; padding: 8px 14px; border-radius: 6px; font-size: 10px; cursor: pointer; color: var(--muted); }
 .view-toolbar button.active { color: var(--ink); background: #e8e5de; }
 .view-toolbar .show-walls { border-left: 1px solid var(--line); border-radius: 0 6px 6px 0; margin-left: 2px; padding-inline: 12px; color: var(--ink); font-weight: 600; }
+.view-toolbar .show-walls.active { background: var(--ink); color: white; }
+.view-toolbar .show-walls::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: #aaa; vertical-align: 1px; }
+.view-toolbar .show-walls.active::before { background: #9fce8e; }
 .controls-help { position: absolute; left: 18px; bottom: 15px; display: flex; gap: 15px; padding: 8px 11px; border-radius: 7px; background: #ffffffcc; color: var(--muted); font-size: 9px; }
 .room-label { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .13em; font-weight: 700; color: #57594f; background: #ffffffbd; padding: 6px 10px; border-radius: 20px; pointer-events: none; }
 .loading { position: absolute; inset: 0; background: #eeeae1; display: grid; place-content: center; justify-items: center; z-index: 12; transition: opacity .5s; }

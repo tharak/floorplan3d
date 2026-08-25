@@ -409,7 +409,6 @@ document.querySelector("#mobileCloseBtn").addEventListener("click", () => docume
 
 const views = {
   top: { position: [0, 26, .1], target: [0, 0, .1], wallHeight: .38 },
-  walk: { position: [-1.2, 1.5, -2.8], target: [3.8, 1.2, -1.8], wallHeight: 2.4 },
   cameraReset: { position: [12.5, 15.5, 17.5], target: [0, 0, .2], wallHeight: WALL_BASE_HEIGHT }
 };
 function applyView(viewName, activeButton = null) {
@@ -419,18 +418,25 @@ function applyView(viewName, activeButton = null) {
   camera.position.fromArray(view.position);
   controls.target.fromArray(view.target);
   walls.forEach(item => { item.scale.y = view.wallHeight / WALL_BASE_HEIGHT; item.position.y = view.wallHeight / 2; });
-  controls.maxPolarAngle = viewName === "walk" ? Math.PI / 1.75 : Math.PI / 2.04;
+  controls.maxPolarAngle = Math.PI / 2.04;
   camera.lookAt(controls.target);
   camera.updateProjectionMatrix();
   controls.update();
   controls.enabled = true;
   if (activeButton) document.querySelectorAll("[data-view]").forEach(item => item.classList.toggle("active", item === activeButton));
 }
-document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => applyView(button.dataset.view, button)));
-document.querySelector("#showWallsBtn").addEventListener("click", () => {
-  applyView("cameraReset", document.querySelector('[data-view="top"]'));
-  showToast("Walls shown");
-});
+let wallsShown = false;
+const showWallsButton = document.querySelector("#showWallsBtn");
+const plantaButton = document.querySelector('[data-view="top"]');
+function setWallsShown(show) {
+  wallsShown = show;
+  applyView(show ? "cameraReset" : "top", plantaButton);
+  showWallsButton.classList.toggle("active", show);
+  showWallsButton.setAttribute("aria-pressed", String(show));
+  showToast(show ? "Walls shown" : "Walls hidden");
+}
+plantaButton.addEventListener("click", () => setWallsShown(false));
+showWallsButton.addEventListener("click", () => setWallsShown(!wallsShown));
 applyView("top", document.querySelector('[data-view="top"]'));
 
 function showToast(message) {
