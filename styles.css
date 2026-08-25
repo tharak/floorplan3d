@@ -36,6 +36,7 @@ button { color: inherit; }
 .button.outline { background: white; border: 1px solid var(--line); }
 .button.danger { background: #f8e9e4; color: #983f25; }
 .button.full { width: 100%; margin-top: 18px; }
+.button.texture-rotate { margin: 0 0 13px; }
 .icon-button { width: 36px; height: 36px; background: #f1f0eb; font-size: 20px; }
 
 main { height: calc(100% - 72px); display: grid; grid-template-columns: 340px 1fr; }
@@ -56,6 +57,15 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
 .section-title { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 11px; }
 .section-title span { font: 600 12px Manrope; }
 .section-title small { font-size: 9px; color: var(--muted); }
+.planning-tools { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+.plan-layers { display: grid; grid-template-columns: .9fr .75fr 1.55fr; gap: 5px; }
+.plan-layers button { min-width: 0; border: 1px solid var(--line); border-radius: 7px; background: #faf9f6; padding: 8px 5px; color: var(--muted); font-size: 8px; font-weight: 600; cursor: pointer; }
+.plan-layers button.active { background: var(--ink); border-color: var(--ink); color: white; }
+.appliance-title { margin-top: 13px; }
+.appliance-tray { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.appliance-tray button { flex: 0 0 72px; height: 58px; border: 1px solid var(--line); border-radius: 8px; background: white; padding: 6px 4px; color: var(--muted); font-size: 8px; cursor: grab; }
+.appliance-tray button:active { cursor: grabbing; }
+.appliance-tray button span { display: block; color: var(--accent-dark); font-size: 18px; line-height: 22px; }
 .material-search { width: 100%; height: 36px; margin: 0 0 12px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; background: #faf9f6; color: var(--ink); font-size: 10px; outline: none; }
 .material-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px #b9654218; }
 .material-search[hidden] { display: none; }
@@ -125,6 +135,12 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
   .selection-card { padding: 8px 10px; margin-bottom: 8px; }
   .selection-icon { width: 28px; height: 28px; }
   .section-title { margin-bottom: 7px; }
+  .planning-tools { margin-bottom: 8px; padding-bottom: 8px; }
+  .plan-layers { grid-template-columns: .85fr .7fr 1.45fr; }
+  .plan-layers button { padding: 7px 3px; font-size: 7px; }
+  .appliance-title { margin-top: 8px; }
+  .appliance-tray button { flex-basis: 65px; height: 48px; padding: 3px; font-size: 7px; }
+  .appliance-tray button span { font-size: 15px; line-height: 18px; }
   .material-search { height: 34px; margin-bottom: 8px; }
   .brand-group { padding-top: 7px; }
   .brand-heading { margin-bottom: 4px; }

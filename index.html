@@ -47,14 +47,35 @@
         </div>
 
         <section class="panel active" id="materialsPanel">
+          <div class="planning-tools">
+            <div class="section-title"><span>Planta de referência</span><small>Sobrepor ao projeto</small></div>
+            <div class="plan-layers" role="group" aria-label="Planta de referência">
+              <button class="active" data-plan-layer="architecture" aria-pressed="true">Arquitetura</button>
+              <button data-plan-layer="electrical" aria-pressed="false">Elétrica</button>
+              <button data-plan-layer="systems" aria-pressed="false">Ar · Gás · Prumadas</button>
+            </div>
+            <div class="section-title appliance-title"><span>Eletrodomésticos</span><small>Arraste para a planta</small></div>
+            <div class="appliance-tray" aria-label="Eletrodomésticos">
+              <button draggable="true" data-appliance="fridge"><span>▥</span>Geladeira</button>
+              <button draggable="true" data-appliance="stove"><span>▦</span>Fogão</button>
+              <button draggable="true" data-appliance="oven"><span>□</span>Forno</button>
+              <button draggable="true" data-appliance="microwave"><span>▭</span>Micro-ondas</button>
+              <button draggable="true" data-appliance="dishwasher"><span>◫</span>Lava-louças</button>
+              <button draggable="true" data-appliance="washer"><span>◉</span>Lava e seca</button>
+              <button draggable="true" data-appliance="hood"><span>⌂</span>Coifa</button>
+              <button draggable="true" data-appliance="ac"><span>≈</span>Ar-condicionado</button>
+            </div>
+          </div>
           <div class="selection-card">
             <span class="selection-icon">◇</span>
             <div><small>Selecionado</small><strong id="selectionName">Cozinha gourmet · Estar / Jantar</strong></div>
           </div>
+          <button class="button outline full texture-rotate" id="rotateTextureBtn">Girar textura 90°</button>
           <div class="section-title"><span>Acabamentos</span><small>Clique para aplicar</small></div>
           <input class="material-search" id="materialSearch" type="search" placeholder="Buscar por nome, marca, categoria ou acabamento" aria-label="Buscar acabamentos" />
           <div class="material-groups" id="materialList"></div>
           <button class="button outline full" id="hideWallBtn">Remover parede selecionada</button>
+          <button class="button danger full" id="deleteApplianceBtn" hidden>Excluir eletrodoméstico</button>
           <p class="hint">Selecione um piso ou parede na maquete e escolha qualquer acabamento da biblioteca.</p>
         </section>
 

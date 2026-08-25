@@ -7,8 +7,11 @@ Protótipo web estático para visualização e personalização do apartamento d
 - Planta navegável com câmera superior e visualização de paredes
 - Seleção direta de ambientes, pisos e paredes
 - Biblioteca unificada: qualquer acabamento pode ser aplicado ao piso ou à parede selecionada
+- Rotação da textura selecionada em incrementos de 90°
 - Catálogo pesquisável com 84 padrões oficiais ARAUCO Melamina, carregados sob demanda
 - Acabamentos agrupados por marca, categoria/coleção e tipo de textura
+- Sobreposições alinhadas das plantas de Arquitetura, Elétrica e Ar Condicionado/Gás/Prumadas
+- Bandeja de eletrodomésticos com arrastar e soltar na planta
 - Remoção visual de divisórias internas
 - Histórico de desfazer, persistência local e exportação de imagem
 - Layout responsivo para desktop e celular
