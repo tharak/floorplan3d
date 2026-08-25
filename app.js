@@ -12,33 +12,77 @@ const MATERIALS = [
   { id: "sage", name: "Sálvia", type: "wall", color: "#778070", roughness: 0.96 }
 ];
 
+try {
+  const response = await fetch("textures/arauco/source-manifest.json");
+  if (response.ok) {
+    const catalog = await response.json();
+    MATERIALS.push(...catalog.textures.map(item => ({
+      id: `arauco-${item.filename.replace(/\.[^.]+$/, "")}`,
+      name: item.name,
+      type: "wall",
+      brand: "ARAUCO",
+      finish: item.finish,
+      image: `textures/arauco/${item.filename}`,
+      color: "#ffffff",
+      roughness: .82,
+      repeat: [1, 1]
+    })));
+  }
+} catch (error) {
+  console.warn("ARAUCO texture catalog unavailable", error);
+}
+
+const CENTER_X = 7.0;
+const CENTER_Z = 6.8;
+const point = (x, z) => [x - CENTER_X, z - CENTER_Z];
+const room = (id, name, floor, coordinates) => ({ id, name, floor, points: coordinates.map(([x, z]) => point(x, z)) });
+const wall = (name, x1, z1, x2, z2, removable = false) => ({ name, a: point(x1, z1), b: point(x2, z2), removable });
+
+// Geometry traced from sheet 1 of the supplied architectural PDF.
 const ROOMS = [
-  { id: "balcony1", name: "Sacada", x: -5.0, z: 1.0, w: 2.0, d: 12.0, floor: "travertine" },
-  { id: "service", name: "Serviço", x: -1.5, z: -5.0, w: 5.0, d: 2.0, floor: "travertine" },
-  { id: "serviceBath", name: "Banho de serviço", x: 2.2, z: -5.0, w: 2.0, d: 2.0, floor: "travertine" },
-  { id: "living", name: "Estar / Jantar", x: 1.0, z: -1.8, w: 10.0, d: 4.4, floor: "oak" },
-  { id: "lavatory", name: "Lavatório", x: 7.0, z: -0.4, w: 2.0, d: 1.7, floor: "travertine" },
-  { id: "bath3", name: "Banho Suíte 3", x: 7.0, z: 1.55, w: 2.0, d: 1.7, floor: "travertine" },
-  { id: "closet", name: "Closet", x: 0.0, z: 2.0, w: 6.0, d: 1.3, floor: "oak" },
-  { id: "hall", name: "Circulação", x: 4.0, z: 2.0, w: 2.0, d: 1.3, floor: "oak" },
-  { id: "suite1", name: "Suíte 01", x: -2.0, z: 5.2, w: 5.0, d: 5.1, floor: "oak" },
-  { id: "bath1", name: "Banho Suíte 1", x: 1.1, z: 5.2, w: 1.6, d: 5.1, floor: "travertine" },
-  { id: "suite2", name: "Suíte 02", x: 3.4, z: 5.2, w: 2.8, d: 5.1, floor: "oak" },
-  { id: "bath2", name: "Banho Suíte 2", x: 5.5, z: 5.2, w: 1.3, d: 5.1, floor: "travertine" },
-  { id: "suite3", name: "Suíte 03", x: 7.4, z: 4.6, w: 2.8, d: 4.7, floor: "oak" },
-  { id: "balcony2", name: "Sacada suíte", x: 7.4, z: 7.9, w: 2.8, d: 1.2, floor: "travertine" }
+  room("balcony1", "Sacada social", "travertine", [[.55,.45],[2.95,.45],[2.95,7.30],[2.42,7.30],[2.42,12.35],[1.35,12.35]]),
+  room("service", "Serviço", "travertine", [[3.05,.45],[6.10,.45],[6.10,1.95],[3.85,1.95],[3.85,2.08],[3.05,2.08]]),
+  room("serviceBath", "Banho de serviço", "travertine", [[6.15,.45],[7.50,.45],[7.50,1.95],[6.15,1.95]]),
+  room("living", "Cozinha gourmet · Estar / Jantar", "oak", [[3.05,2.05],[7.68,2.05],[7.68,3.45],[11.14,3.45],[11.14,7.27],[3.05,7.27]]),
+  room("lavatory", "Lavatório", "travertine", [[11.27,4.52],[13.48,4.52],[13.48,5.73],[11.27,5.73]]),
+  room("bath3", "Banho Suíte 3", "travertine", [[11.27,5.85],[13.48,5.85],[13.48,7.27],[11.27,7.27]]),
+  room("closet", "Closet", "oak", [[2.43,7.43],[9.42,7.43],[9.42,8.86],[5.28,8.86],[5.28,9.02],[2.43,9.02]]),
+  room("hall", "Circulação", "oak", [[9.47,7.43],[10.65,7.43],[10.65,9.92],[9.47,9.92]]),
+  room("suite1", "Suíte 01", "oak", [[2.43,9.02],[5.24,9.02],[5.24,12.32],[2.43,12.32]]),
+  room("bath1", "Banho Suíte 1", "travertine", [[5.34,9.02],[6.65,9.02],[6.65,12.32],[5.34,12.32]]),
+  room("suite2", "Suíte 02", "oak", [[6.73,9.02],[9.38,9.02],[9.38,12.32],[6.73,12.32]]),
+  room("bath2", "Banho Suíte 2", "travertine", [[9.48,9.94],[10.66,9.94],[10.66,12.32],[9.48,12.32]]),
+  room("suite3", "Suíte 03", "oak", [[10.78,7.45],[13.48,7.45],[13.48,11.66],[10.78,11.66]]),
+  room("balcony2", "Sacada Suíte 3", "travertine", [[10.75,11.82],[13.48,11.82],[13.55,12.55],[10.82,12.55]])
 ];
 
 const WALLS = [
-  ["Fachada oeste", -6, 1, 0.18, 12.2, false], ["Fachada norte", 0, -6.1, 12.2, 0.18, false],
-  ["Fachada leste superior", 5.9, -3.7, 0.18, 4.8, false], ["Fachada leste", 8.5, 2.9, 0.18, 8.7, false],
-  ["Fachada sul", 1.3, 8.55, 14.4, 0.18, false], ["Parede cozinha / serviço", -1.3, -3.95, 6.8, 0.14, true],
-  ["Parede cozinha / sacada", -4.0, -1.8, 0.14, 4.4, true], ["Parede social / íntimo", 0.5, 0.48, 10.8, 0.14, true],
-  ["Divisória closet", 0.4, 2.72, 7.5, 0.14, true], ["Divisória suíte 1", 0.35, 5.5, 0.14, 5.8, true],
-  ["Divisória suíte 2", 4.85, 5.4, 0.14, 6.0, true], ["Divisória suíte 3", 6.0, 4.5, 0.14, 5.0, true],
-  ["Banheiros sociais", 7.0, 0.55, 2.8, 0.14, true], ["Parede lavabo", 6.0, -0.6, 0.14, 2.2, true],
-  ["Parede circulação", 4.0, 1.35, 0.14, 1.7, true], ["Banho suíte 1", 1.9, 5.2, 0.14, 4.9, true],
-  ["Banho suíte 2", 5.5, 5.2, 0.14, 4.9, true], ["Parede serviço", 2.25, -5.0, 0.14, 2.0, true]
+  wall("Fachada serviço",3.00,.42,7.55,.42), wall("Fachada serviço",7.55,.42,7.55,1.96),
+  wall("Serviço / sacada",3.00,.42,3.00,1.42), wall("Serviço / sacada",3.00,2.12,3.00,7.28),
+  wall("Serviço / cozinha",3.82,1.98,6.05,1.98,true), wall("Banho de serviço",6.12,.42,6.12,1.08,true),
+  wall("Banho de serviço",6.12,1.56,6.12,1.98,true), wall("Banho de serviço",6.12,1.98,7.72,1.98,true),
+  wall("Entrada",7.72,1.98,7.72,2.60), wall("Entrada",7.72,3.12,7.72,3.48),
+  wall("Fachada social",7.72,3.48,11.48,3.48), wall("Fachada social",12.18,3.48,12.28,3.48),
+  wall("Hall de entrada",12.28,3.48,12.28,4.15), wall("Hall de entrada",12.28,4.48,13.50,4.48),
+  wall("Fachada leste",13.50,4.48,13.50,12.42),
+  wall("Lavatório",11.25,4.50,11.25,4.88,true), wall("Lavatório",11.25,5.40,11.25,5.75,true),
+  wall("Lavatório",11.25,5.75,13.50,5.75,true), wall("Banho Suíte 3",11.25,5.83,11.25,7.28,true),
+  wall("Banho Suíte 3",11.25,7.28,12.02,7.28,true), wall("Banho Suíte 3",12.60,7.28,13.50,7.28,true),
+  wall("Área social / íntima",2.40,7.30,5.65,7.30,true), wall("Área social / íntima",6.18,7.30,9.45,7.30,true),
+  wall("Circulação",9.45,7.30,9.45,7.98,true), wall("Circulação",9.45,8.52,9.45,8.88,true),
+  wall("Circulação",9.45,8.88,10.15,8.88,true), wall("Circulação",10.58,8.88,10.68,8.88,true),
+  wall("Suíte 03",10.68,7.38,10.68,8.12,true), wall("Suíte 03",10.68,8.62,10.68,9.92,true),
+  wall("Suíte 03",10.68,9.92,10.68,11.78), wall("Suíte 03 / sacada",10.68,11.78,11.18,11.78),
+  wall("Suíte 03 / sacada",11.78,11.78,13.50,11.78),
+  wall("Closet",2.40,7.30,2.40,8.92,true), wall("Suíte 01",2.40,8.92,2.40,12.42),
+  wall("Suíte 01 / banho",5.28,8.92,5.28,9.34,true), wall("Suíte 01 / banho",5.28,9.88,5.28,12.42,true),
+  wall("Banho Suíte 1",5.28,8.92,5.82,8.92,true), wall("Banho Suíte 1",6.35,8.92,6.70,8.92,true),
+  wall("Banho Suíte 1 / Suíte 02",6.70,8.92,6.70,12.42,true),
+  wall("Suíte 02",6.70,8.92,9.40,8.92,true), wall("Suíte 02 / banho",9.40,8.92,9.40,9.55,true),
+  wall("Suíte 02 / banho",9.40,10.05,9.40,12.42,true), wall("Banho Suíte 2",9.40,9.92,9.86,9.92,true),
+  wall("Banho Suíte 2",10.40,9.92,10.68,9.92,true),
+  wall("Fachada dormitórios",2.40,12.42,4.86,12.42), wall("Fachada dormitórios",5.38,12.42,7.18,12.42),
+  wall("Fachada dormitórios",7.88,12.42,10.05,12.42), wall("Fachada dormitórios",10.55,12.42,10.75,12.42)
 ];
 
 const canvas = document.querySelector("#scene");
@@ -54,10 +98,10 @@ renderer.toneMappingExposure = 1.15;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xebe8e0);
 scene.fog = new THREE.Fog(0xebe8e0, 24, 47);
-const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-camera.position.set(17, 20, 22);
+const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+camera.position.set(12.5, 15.5, 17.5);
 const controls = new OrbitControls(camera, canvas);
-controls.target.set(1, 0, 1.4);
+controls.target.set(0, 0, .2);
 controls.enableDamping = true;
 controls.dampingFactor = 0.07;
 controls.maxPolarAngle = Math.PI / 2.04;
@@ -72,23 +116,26 @@ scene.add(sun);
 
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0xe3dfd6, roughness: 1 }));
 ground.rotation.x = -Math.PI / 2; ground.position.y = -0.06; ground.receiveShadow = true; scene.add(ground);
-const apartment = new THREE.Group(); apartment.rotation.y = -0.08; scene.add(apartment);
+const apartment = new THREE.Group(); scene.add(apartment);
 
 const textureLoader = new THREE.TextureLoader();
 const textureCache = new Map();
-for (const item of MATERIALS.filter(item => item.image)) {
+function textureFor(item) {
+  if (textureCache.has(item.id)) return textureCache.get(item.id);
   const texture = textureLoader.load(item.image);
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.repeat.set(...(item.repeat || [2, 2]));
   textureCache.set(item.id, texture);
+  return texture;
 }
+for (const item of MATERIALS.filter(item => item.image && !item.brand)) textureFor(item);
 
 function materialFor(id, surface = "floor") {
   const item = MATERIALS.find(material => material.id === id) || MATERIALS.find(material => material.type === surface);
   const options = { color: item.color, roughness: item.roughness, metalness: 0 };
-  if (item.image && textureCache.has(item.id)) {
-    options.map = textureCache.get(item.id);
+  if (item.image) {
+    options.map = textureFor(item);
     options.color = 0xffffff;
   }
   return new THREE.MeshStandardMaterial(options);
@@ -96,25 +143,51 @@ function materialFor(id, surface = "floor") {
 
 const floors = [];
 for (const room of ROOMS) {
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(room.w - 0.05, 0.10, room.d - 0.05), materialFor(room.floor));
-  floor.position.set(room.x, 0, room.z); floor.receiveShadow = true;
+  const shape = new THREE.Shape();
+  room.points.forEach(([x, z], index) => index ? shape.lineTo(x, -z) : shape.moveTo(x, -z));
+  shape.closePath();
+  const geometry = new THREE.ShapeGeometry(shape);
+  geometry.rotateX(-Math.PI / 2);
+  const floor = new THREE.Mesh(geometry, materialFor(room.floor));
+  floor.position.y = .015; floor.receiveShadow = true;
   floor.userData = { kind: "floor", id: room.id, name: room.name, materialId: room.floor };
   apartment.add(floor); floors.push(floor);
 }
 
 const walls = [];
-WALLS.forEach(([name, x, z, w, d, removable], index) => {
-  const wall = new THREE.Mesh(new THREE.BoxGeometry(w, 2.6, d), materialFor("warmwhite", "wall"));
-  wall.position.set(x, 1.3, z); wall.castShadow = wall.receiveShadow = true;
-  wall.userData = { kind: "wall", id: `wall-${index}`, name, removable, materialId: "warmwhite" };
-  apartment.add(wall); walls.push(wall);
+const WALL_BASE_HEIGHT = 1.26;
+WALLS.forEach((segment, index) => {
+  const [x1, z1] = segment.a; const [x2, z2] = segment.b;
+  const length = Math.hypot(x2 - x1, z2 - z1);
+  const wallMesh = new THREE.Mesh(new THREE.BoxGeometry(length, WALL_BASE_HEIGHT, .12), materialFor("warmwhite", "wall"));
+  wallMesh.position.set((x1 + x2) / 2, WALL_BASE_HEIGHT / 2, (z1 + z2) / 2);
+  wallMesh.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
+  wallMesh.castShadow = wallMesh.receiveShadow = true;
+  wallMesh.userData = { kind: "wall", id: `wall-${index}`, name: segment.name, removable: segment.removable, materialId: "warmwhite" };
+  apartment.add(wallMesh); walls.push(wallMesh);
 });
 
-function addWindow(x, z, w, d) {
-  const glass = new THREE.Mesh(new THREE.BoxGeometry(w, 1.65, d), new THREE.MeshPhysicalMaterial({ color: 0x9fc3ca, transparent: true, opacity: .28, roughness: .15, transmission: .45 }));
-  glass.position.set(x, 1.3, z); apartment.add(glass);
+function addWindow(name, x1, z1, x2, z2, fullHeight = false) {
+  const [ax, az] = point(x1, z1); const [bx, bz] = point(x2, z2);
+  const length = Math.hypot(bx - ax, bz - az);
+  const height = fullHeight ? 1.45 : .82;
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(length, height, .035), new THREE.MeshPhysicalMaterial({ color: 0x8ebbc2, transparent: true, opacity: .34, roughness: .12, transmission: .62 }));
+  glass.position.set((ax + bx) / 2, fullHeight ? .74 : 1.02, (az + bz) / 2);
+  glass.rotation.y = -Math.atan2(bz - az, bx - ax); glass.userData.name = name; apartment.add(glass);
+  const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x4e5350, roughness: .65 });
+  for (const offset of [-length / 2, length / 2]) {
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(.045, height + .08, .06), frameMaterial);
+    frame.position.copy(glass.position); frame.rotation.copy(glass.rotation);
+    frame.translateX(offset); apartment.add(frame);
+  }
 }
-addWindow(-5.93, 1.1, .08, 6.0); addWindow(-2.2, 8.48, 4.0, .08); addWindow(3.6, 8.48, 2.3, .08); addWindow(7.4, 8.48, 2.3, .08);
+addWindow("Esquadria serviço",3.00,1.42,3.00,2.12,true);
+addWindow("Janela Suíte 01",4.86,12.42,5.38,12.42);
+addWindow("Janela Suíte 02",7.18,12.42,7.88,12.42);
+addWindow("Janela Banho Suíte 2",10.05,12.42,10.55,12.42);
+addWindow("Esquadria Suíte 03",11.18,11.78,11.78,11.78,true);
+addWindow("Guarda-corpo sacada social",.55,.45,1.35,12.35,true);
+addWindow("Guarda-corpo sacada suíte",10.82,12.55,13.55,12.55,true);
 
 const furniture = [];
 let furnitureCounter = 0;
@@ -136,25 +209,39 @@ function makeFurniture(type, restoring = false) {
     part(new THREE.BoxGeometry(2.4, .45, .9), fabric, 0, .35, 0);
     part(new THREE.BoxGeometry(2.4, .8, .2), fabric, 0, .78, .38);
     part(new THREE.BoxGeometry(.18, .58, .9), fabric, -1.12, .52, 0); part(new THREE.BoxGeometry(.18, .58, .9), fabric, 1.12, .52, 0);
-    group.position.set(0, .04, -1.3); return finishFurniture(group, type, "Sofá", restoring);
+    group.position.set(.8, .04, -1.1); return finishFurniture(group, type, "Sofá", restoring);
   }
   if (type === "table") {
     part(new THREE.CylinderGeometry(.9, .9, .12, 40), wood, 0, .78, 0);
     part(new THREE.CylinderGeometry(.14, .28, .75, 24), wood, 0, .38, 0);
-    group.position.set(2.6, .04, -1.3); return finishFurniture(group, type, "Mesa de jantar", restoring);
+    group.position.set(2.8, .04, -1.1); return finishFurniture(group, type, "Mesa de jantar", restoring);
   }
   if (type === "bed") {
     part(new THREE.BoxGeometry(2.0, .42, 2.2), linen, 0, .42, 0);
     part(new THREE.BoxGeometry(2.05, .95, .16), wood, 0, .68, .99);
     part(new THREE.BoxGeometry(.78, .16, .5), new THREE.MeshStandardMaterial({ color: 0xf3efe7, roughness: 1 }), -.48, .7, .62);
     part(new THREE.BoxGeometry(.78, .16, .5), new THREE.MeshStandardMaterial({ color: 0xf3efe7, roughness: 1 }), .48, .7, .62);
-    group.position.set(-2, .04, 5.2); return finishFurniture(group, type, "Cama queen", restoring);
+    group.position.set(-3.2, .04, 3.8); return finishFurniture(group, type, "Cama queen", restoring);
   }
   part(new THREE.CylinderGeometry(.55, .65, .5, 24), fabric, 0, .4, 0);
   part(new THREE.BoxGeometry(1.1, .9, .18), fabric, 0, .86, .38);
-  group.position.set(-1.7, .04, -1.5); return finishFurniture(group, type, "Poltrona", restoring);
+  group.position.set(-1.6, .04, -1.1); return finishFurniture(group, type, "Poltrona", restoring);
 }
 makeFurniture("sofa", true); makeFurniture("table", true); makeFurniture("bed", true); makeFurniture("chair", true);
+const suite2Bed = makeFurniture("bed", true); suite2Bed.position.set(.65, .04, 3.75); suite2Bed.rotation.y = Math.PI;
+const suite3Bed = makeFurniture("bed", true); suite3Bed.position.set(5.05, .04, 3.15); suite3Bed.rotation.y = Math.PI / 2;
+
+function addFixture(geometry, color, x, y, z, rotation = 0) {
+  const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, roughness: .78 }));
+  mesh.position.set(x, y, z); mesh.rotation.y = rotation; mesh.castShadow = mesh.receiveShadow = true; apartment.add(mesh);
+  return mesh;
+}
+// Built-in cabinetry clarifies the kitchen and wet areas without pretending to be loose furniture.
+addFixture(new THREE.BoxGeometry(2.35, .84, .68), 0xb6aa96, -2.0, .43, -4.02);
+addFixture(new THREE.BoxGeometry(2.05, .07, .73), 0xede8df, -2.0, .88, -4.02);
+addFixture(new THREE.BoxGeometry(3.0, .82, .5), 0xc4b8a6, -2.3, .42, -5.02);
+addFixture(new THREE.BoxGeometry(.62, .08, .42), 0x6b6c67, -2.0, .93, -4.02);
+for (const [x, z] of [[-1.1,-4.02],[-2.9,-4.02]]) addFixture(new THREE.CylinderGeometry(.05,.05,.72,12), 0x5e5d57, x, .42, z);
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -210,8 +297,8 @@ canvas.addEventListener("pointermove", event => {
   if (!dragging) return;
   updatePointer(event);
   if (raycaster.ray.intersectPlane(dragPlane, dragPoint)) {
-    dragging.position.x = THREE.MathUtils.clamp(dragPoint.x + dragOffset.x, -5.5, 8);
-    dragging.position.z = THREE.MathUtils.clamp(dragPoint.z + dragOffset.z, -5.5, 8);
+    dragging.position.x = THREE.MathUtils.clamp(dragPoint.x + dragOffset.x, -6.2, 6.3);
+    dragging.position.z = THREE.MathUtils.clamp(dragPoint.z + dragOffset.z, -6.2, 6.0);
   }
 });
 
@@ -228,11 +315,15 @@ canvas.addEventListener("pointerup", event => {
 function renderMaterials() {
   const list = document.querySelector("#materialList");
   list.innerHTML = "";
-  MATERIALS.filter(item => item.type === selectedSurface).forEach(item => {
+  const search = document.querySelector("#materialSearch");
+  search.hidden = selectedSurface !== "wall";
+  const query = search.value.trim().toLocaleLowerCase("pt-BR");
+  const available = MATERIALS.filter(item => item.type === selectedSurface && (!query || `${item.name} ${item.finish || ""}`.toLocaleLowerCase("pt-BR").includes(query)));
+  available.forEach(item => {
     const button = document.createElement("button"); button.className = "material";
     if (selected?.userData.materialId === item.id) button.classList.add("active");
     const background = item.image ? `url('${item.image}')` : item.color;
-    button.innerHTML = `<span class="swatch" style="background:${background}"></span><strong>${item.name}</strong>`;
+    button.innerHTML = `<span class="swatch" style="background:${background}"></span><strong>${item.name}</strong>${item.brand ? `<small>${item.finish}</small>` : ""}`;
     button.addEventListener("click", () => applyMaterial(item)); list.append(button);
   });
   const hide = document.querySelector("#hideWallBtn");
@@ -277,6 +368,7 @@ document.querySelectorAll("#surfaceToggle button").forEach(button => button.addE
   document.querySelectorAll("#surfaceToggle button").forEach(item => item.classList.toggle("active", item === button));
   renderMaterials(); showToast(`Clique em ${selectedSurface === "floor" ? "um ambiente" : "uma parede"} na maquete`);
 }));
+document.querySelector("#materialSearch").addEventListener("input", renderMaterials);
 document.querySelectorAll("[data-furniture]").forEach(button => button.addEventListener("click", () => { pushHistory(); makeFurniture(button.dataset.furniture); saveState(); showToast("Móvel adicionado — arraste para posicionar"); }));
 document.querySelector("#rotateBtn").addEventListener("click", () => { if (selected?.userData.kind !== "furniture") return showToast("Selecione um móvel"); pushHistory(); selected.rotation.y += Math.PI / 4; saveState(); });
 document.querySelector("#deleteBtn").addEventListener("click", () => { if (selected?.userData.kind !== "furniture") return showToast("Selecione um móvel"); pushHistory(); apartment.remove(selected); furniture.splice(furniture.indexOf(selected), 1); selected = null; saveState(); showToast("Móvel removido"); });
@@ -288,12 +380,14 @@ document.querySelector("#mobilePanelBtn").addEventListener("click", () => docume
 document.querySelector("#mobileCloseBtn").addEventListener("click", () => document.querySelector(".sidebar").classList.remove("open"));
 
 const views = {
-  perspective: { position: [17, 20, 22], target: [1, 0, 1.4] },
-  top: { position: [1, 28, 1.4], target: [1, 0, 1.4] },
-  walk: { position: [0, 1.65, -1.8], target: [5, 1.45, -1.0] }
+  perspective: { position: [12.5, 15.5, 17.5], target: [0, 0, .2], wallHeight: WALL_BASE_HEIGHT },
+  top: { position: [0, 26, .1], target: [0, 0, .1], wallHeight: .38 },
+  walk: { position: [-1.2, 1.5, -2.8], target: [3.8, 1.2, -1.8], wallHeight: 2.4 }
 };
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => {
-  const view = views[button.dataset.view]; camera.position.fromArray(view.position); controls.target.fromArray(view.target); controls.update();
+  const view = views[button.dataset.view]; camera.position.fromArray(view.position); controls.target.fromArray(view.target);
+  walls.forEach(item => { item.scale.y = view.wallHeight / WALL_BASE_HEIGHT; item.position.y = view.wallHeight / 2; });
+  controls.maxPolarAngle = button.dataset.view === "walk" ? Math.PI / 1.75 : Math.PI / 2.04; controls.update();
   document.querySelectorAll("[data-view]").forEach(item => item.classList.toggle("active", item === button));
 }));
 

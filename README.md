@@ -7,6 +7,7 @@ Protótipo web estático para visualização e personalização do apartamento d
 - Maquete 3D navegável com vistas 3D, planta e interior
 - Seleção de ambientes, pisos, paredes e móveis
 - Aplicação de materiais de piso e parede
+- Catálogo pesquisável com 84 padrões oficiais ARAUCO Melamina, carregados sob demanda
 - Remoção visual de divisórias internas
 - Adição, movimentação, rotação e exclusão de móveis
 - Histórico de desfazer, persistência local e exportação de imagem
@@ -24,7 +25,7 @@ Depois acesse `http://localhost:8000`.
 
 ## Adicionar texturas
 
-Coloque a imagem otimizada em `textures/` e adicione uma entrada ao array `MATERIALS` no início de `app.js`. Consulte `textures/README.md`.
+Coloque a imagem otimizada em `textures/` e adicione uma entrada ao array `MATERIALS` no início de `app.js`. O catálogo ARAUCO é alimentado automaticamente por `textures/arauco/source-manifest.json`. Consulte `textures/README.md`.
 
 ## Publicar no GitHub Pages
 
@@ -32,4 +33,4 @@ O workflow `.github/workflows/pages.yml` publica automaticamente pushes para `ma
 
 ## Limitações
 
-Este é um modelo conceitual baseado visualmente na primeira folha arquitetônica do PDF. Ele não substitui levantamento, projeto executivo ou validação estrutural. A remoção de paredes é apenas uma simulação visual.
+Este é um modelo conceitual traçado a partir da primeira folha arquitetônica do PDF. Ele não substitui levantamento, projeto executivo ou validação estrutural. A remoção de paredes é apenas uma simulação visual.

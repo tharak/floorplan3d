@@ -59,12 +59,16 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
 .section-title { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 11px; }
 .section-title span { font: 600 12px Manrope; }
 .section-title small { font-size: 9px; color: var(--muted); }
+.material-search { width: 100%; height: 36px; margin: 0 0 12px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; background: #faf9f6; color: var(--ink); font-size: 10px; outline: none; }
+.material-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px #b9654218; }
+.material-search[hidden] { display: none; }
 .materials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .material { padding: 0; border: 1px solid transparent; border-radius: 8px; background: none; text-align: left; cursor: pointer; }
 .material .swatch { display: block; aspect-ratio: 1; border-radius: 7px; border: 1px solid #00000012; background-size: cover; background-position: center; transition: .2s; }
 .material:hover .swatch { transform: scale(.96); }
 .material.active .swatch { outline: 2px solid var(--accent); outline-offset: 2px; }
 .material strong { display: block; font-size: 9px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.material small { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; text-transform: uppercase; }
 .hint { font-size: 10px; line-height: 1.5; color: var(--muted); margin: 11px 2px 0; }
 .furniture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .furniture-grid button { background: white; border: 1px solid var(--line); border-radius: 9px; padding: 10px; text-align: left; cursor: pointer; }
