@@ -4,13 +4,12 @@ Protótipo web estático para visualização e personalização do apartamento d
 
 ## Recursos
 
-- Maquete 3D navegável com vistas 3D, planta e interior
-- Seleção direta de ambientes, pisos, paredes e móveis
+- Planta navegável com câmera superior e visualização de paredes
+- Seleção direta de ambientes, pisos e paredes
 - Biblioteca unificada: qualquer acabamento pode ser aplicado ao piso ou à parede selecionada
 - Catálogo pesquisável com 84 padrões oficiais ARAUCO Melamina, carregados sob demanda
 - Acabamentos agrupados por marca, categoria/coleção e tipo de textura
 - Remoção visual de divisórias internas
-- Adição, movimentação, rotação e exclusão de móveis
 - Histórico de desfazer, persistência local e exportação de imagem
 - Layout responsivo para desktop e celular
 
@@ -24,9 +23,9 @@ python3 -m http.server 8000
 
 Depois acesse `http://localhost:8000`.
 
-## Adicionar texturas
+## Catálogo de texturas
 
-Coloque a imagem otimizada em `textures/` e adicione uma entrada ao array `MATERIALS` no início de `app.js`. O catálogo ARAUCO é alimentado automaticamente por `textures/arauco/source-manifest.json`. Consulte `textures/README.md`.
+O catálogo ARAUCO é alimentado automaticamente por `textures/arauco/source-manifest.json`. Consulte `textures/README.md`.
 
 ## Publicar no GitHub Pages
 

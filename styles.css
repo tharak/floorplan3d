@@ -43,7 +43,7 @@ main { height: calc(100% - 72px); display: grid; grid-template-columns: 340px 1f
 .eyebrow { text-transform: uppercase; letter-spacing: .13em; font-size: 9px; font-weight: 700; color: var(--accent); margin: 0 0 9px; }
 h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
 .sidebar-heading > p:last-child { font-size: 12px; line-height: 1.55; color: var(--muted); margin: 9px 0 20px; }
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); margin: 0 -4px 20px; }
+.tabs { display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1px solid var(--line); margin: 0 -4px 20px; }
 .tab { background: none; border: 0; padding: 10px 2px 12px; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; }
 .tab.active { color: var(--ink); border-color: var(--accent); }
 .panel { display: none; }
@@ -78,17 +78,6 @@ h1 { font: 600 25px/1.2 Manrope; letter-spacing: -.04em; margin: 0; }
 .material strong { display: block; font-size: 9px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .material small { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; text-transform: uppercase; }
 .hint { font-size: 10px; line-height: 1.5; color: var(--muted); margin: 11px 2px 0; }
-.furniture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.furniture-grid button { background: white; border: 1px solid var(--line); border-radius: 9px; padding: 10px; text-align: left; cursor: pointer; }
-.furniture-grid strong, .furniture-grid small { display: block; }
-.furniture-grid strong { font-size: 11px; margin-top: 7px; }
-.furniture-grid small { font-size: 9px; color: var(--muted); }
-.furniture-preview { height: 54px; display: block; border-radius: 6px; background-color: #e8e1d7; position: relative; }
-.furniture-preview::after { content: ""; position: absolute; inset: 14px 12px; border: 5px solid #a77e6c; border-radius: 5px; }
-.furniture-preview.table::after { border-radius: 50%; background: #9a846b; border: 0; inset: 10px 24px; }
-.furniture-preview.bed::after { background: #d7cabb; border: 3px solid #b09e8d; inset: 7px 20px; }
-.furniture-preview.chair::after { border-radius: 50% 50% 7px 7px; inset: 13px 28px; }
-.object-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
 .project-card { border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
 .project-card small, .project-card strong, .project-card span { display: block; }
 .project-card small { font-size: 9px; text-transform: uppercase; color: var(--muted); }
